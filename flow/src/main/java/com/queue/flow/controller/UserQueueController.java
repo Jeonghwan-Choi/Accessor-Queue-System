@@ -1,5 +1,6 @@
 package com.queue.flow.controller;
 
+import com.queue.flow.dto.AllowUserResponse;
 import com.queue.flow.dto.RegisterUserResponse;
 import com.queue.flow.service.UserQueueService;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,19 @@ public class UserQueueController {
             @RequestParam(name = "user_id") Long userId) {
         return userQueueService.registerWaitQueue(queue, userId)
                 .map(RegisterUserResponse::new);
+    }
+
+    /**
+     * Allowed user and Deleted Wait
+     * @param queue
+     * @param count
+     * @return
+     */
+    @PostMapping("/allow")
+    public Mono<?> allowUser(
+            @RequestParam(name = "queue", defaultValue = "default") String queue,
+            @RequestParam(name = "count") Long count){
+        return userQueueService.allowUser(queue, count)
+                .map(allowed -> new AllowUserResponse(count, allowed));
     }
 }
