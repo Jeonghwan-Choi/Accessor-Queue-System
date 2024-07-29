@@ -1,13 +1,13 @@
 package com.queue.flow.controller;
 
 import com.queue.flow.dto.AllowUserResponse;
+import com.queue.flow.dto.AllowedUserResponse;
+import com.queue.flow.dto.RankNumberResponse;
 import com.queue.flow.dto.RegisterUserResponse;
 import com.queue.flow.service.UserQueueService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -41,5 +41,33 @@ public class UserQueueController {
             @RequestParam(name = "count") Long count){
         return userQueueService.allowUser(queue, count)
                 .map(allowed -> new AllowUserResponse(count, allowed));
+    }
+
+    /**
+     * allowed User For user_id
+     * @param queue
+     * @param userId
+     * @return Boolean
+     */
+    @GetMapping("/allowed")
+    public Mono<?> isAllowedUser(
+            @RequestParam(name = "queue", defaultValue = "default") String queue,
+            @RequestParam(name = "user_id") Long userId) {
+        return userQueueService.isAllowed(queue,userId)
+                .map(AllowedUserResponse::new);
+    }
+
+    /**
+     * Get User Rank
+     * @param queue
+     * @param userId
+     * @return
+     */
+    @GetMapping("/rank")
+    public Mono<?> getUserRank(
+            @RequestParam(name = "queue", defaultValue = "default") String queue,
+            @RequestParam(name = "user_id") Long userId) {
+        return userQueueService.getRank(queue,userId)
+                .map(RankNumberResponse::new);
     }
 }
